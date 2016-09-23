@@ -1,5 +1,7 @@
-# tag `latest` is 3.5, but base image's python3-dev is 3.4. Since OCV will only build for 3.4, we'll leave pythonas 3.4 until 3.5 makes it into jessie.
-FROM python:3.4
+# This is missing all the dev dependencies for python3.5, BUT fixes broken numpy package in python:3.4.
+# For now we'll manually link python3 -> python3.4
+# and in the future base image jessie should 
+FROM python:3.5
 MAINTAINER Nate Johnson <nate@biobright.org>
 
 # Do we want to build with CUDA support?
@@ -7,7 +9,7 @@ MAINTAINER Nate Johnson <nate@biobright.org>
 ARG USECUDA=OFF
 
 # libopencv-dev 
-ENV PACKAGES "python3-numpy python3-dev unzip build-essential cmake git libavresample-dev libhdf5-dev libjpeg-dev libpng12-dev libtiff5-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libprotobuf-dev tesseract-ocr libtesseract-dev libleptonica-dev libmp3lame-dev libtheora-dev libvorbis-dev libxvidcore-dev x264  libopencore-amrnb-dev libopencore-amrwb-dev libgstreamer1.0-dev libgstreamer1.0-0 libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-base1.0-0 gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly v4l-utils libv4l-dev libtbb-dev libeigen3-dev liblapack-dev libatlas-dev liblapacke-dev"
+ENV PACKAGES "python3-numpy python3-dev libpython3-dev unzip build-essential cmake git libavresample-dev libhdf5-dev libjpeg-dev libpng12-dev libtiff5-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libprotobuf-dev tesseract-ocr libtesseract-dev libleptonica-dev libmp3lame-dev libtheora-dev libvorbis-dev libxvidcore-dev x264  libopencore-amrnb-dev libopencore-amrwb-dev libgstreamer1.0-dev libgstreamer1.0-0 libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-base1.0-0 gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly v4l-utils libv4l-dev libtbb-dev libeigen3-dev liblapack-dev libatlas-dev liblapacke-dev"
 
 ENV CUDAPACKAGES "nvidia-cuda-dev nvidia-cuda-toolkit"
 
@@ -56,4 +58,7 @@ RUN cd /tmp \
         && cd / \
         && rm -rf /tmp/*opencv*
         
-        
+# Deal with python 3.4 vs 3.5 nonsense. Remove once debian jessie python3-dev/python3-numpy uses python3.5
+RUN update-alternatives --install /usr/local/bin/python3 python3 /usr/bin/python3.4 1 \
+    && update-alternatives --install /usr/bin/python python /usr/bin/python3.4 1 \
+    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.4 1
