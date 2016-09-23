@@ -1,5 +1,5 @@
 # python3-opencv3
-Docker image with OpenCV3 and its python3 bindings for X86-64
+Docker image with OpenCV3 and its python3 bindings for X86-64. Python version is 3.4.
 
 This contains support for mostly everything in X86 OpenCV, minus specialized hardware (gigE, ieee1394 etc.) and specialized software (Matlab etc.) bindings. 
 
