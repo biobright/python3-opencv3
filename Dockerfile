@@ -1,5 +1,5 @@
-# tag `latest` is 3.5
-FROM python:3.5
+# tag `latest` is 3.5, but base image's python3-dev is 3.4. Since OCV will only build for 3.4, we'll leave pythonas 3.4 until 3.5 makes it into jessie.
+FROM python:3.4
 MAINTAINER Nate Johnson <nate@biobright.org>
 
 # Do we want to build with CUDA support?
@@ -11,14 +11,15 @@ ENV PACKAGES "python3-numpy python3-dev unzip build-essential cmake git libavres
 
 ENV CUDAPACKAGES "nvidia-cuda-dev nvidia-cuda-toolkit"
 
-# There IS a way to configure #retries in APT
+# There IS a way to configure #retries in APT, so this can be replaced
 RUN apt-get -y -qq update && apt-get -y install ${PACKAGES} || apt-get -y install ${PACKAGES} || apt-get -y install ${PACKAGES} || apt-get -y install ${PACKAGES} || apt-get -y install ${PACKAGES}
 
 # FFMPEG isn't currently in debian jessie, though it is in sid
 # We'll install the static build for now.
 ENV FFMPEG_RELEASE ffmpeg-release-64bit-static.tar.xz
 RUN curl -SLO "https://johnvansickle.com/ffmpeg/releases/$FFMPEG_RELEASE" \
-    && tar -xf $FFMPEG_RELEASE --strip-components=1 -C /usr/local/bin
+    && tar -xf $FFMPEG_RELEASE --strip-components=1 -C /usr/local/bin \
+    && rm ${FFMPEG_RELEASE}
 
 # the spaces in this conditional ARE important!!!
 RUN if [ "${USECUDA}" = "ON" ]; then apt-get -y -qq update && apt-get -y install ${CUDAPACKAGES}; fi
