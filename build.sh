@@ -7,5 +7,5 @@ DOCKERHUB_REPO='biobright/python3-opencv3'
 
 if [ "${USECUDA}" = "ON" ] || [ "${USECUDA}" = "on" ] ; then TAG='cuda'; else TAG='nocuda'; fi
 echo TAG IS: ${TAG}
-docker build --no-cache -t ${DOCKERHUB_REPO}:${TAG} . \
+docker build --no-cache --build-arg USECUDA=${USECUDA} -t ${DOCKERHUB_REPO}:${TAG} . \
 && docker push ${DOCKERHUB_REPO}:${TAG}
