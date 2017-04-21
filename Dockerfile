@@ -13,6 +13,8 @@ ENV PACKAGES "python3-numpy python3-dev libpython3-dev unzip build-essential cma
 
 ENV CUDAPACKAGES "nvidia-cuda-dev nvidia-cuda-toolkit"
 
+# This works because our only APT sources are from debian repos
+RUN sed -i 's_^deb .*_& contrib nonfree_' /etc/apt/sources.list
 # There IS a way to configure #retries in APT, so this can be replaced
 RUN apt-get -y -qq update && apt-get -y install ${PACKAGES} || apt-get -y install ${PACKAGES} || apt-get -y install ${PACKAGES} || apt-get -y install ${PACKAGES} || apt-get -y install ${PACKAGES}
 
